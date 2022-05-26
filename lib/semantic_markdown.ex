@@ -97,7 +97,6 @@ defmodule SemanticMarkdown do
     footnotes_return: "return to article",
     clean_newlines: true,
     earmark_inner_transform: true,
-    earmark_inner_semantic: false,
     earmark_transform_options: %{},
     content_tag_name: "content",
     merge_content: false

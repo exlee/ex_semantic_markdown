@@ -14,9 +14,10 @@ defmodule SemanticMarkdown.Type do
   ### Own
   - `footnotes_see` - Title of footnote link (default: `"see footnote"`), see [Foonotes Rationale](./README.md#footnotes)
   - `footnotes_return` - Same as above but for the return link (default: `"return to article"`)
-  - `clean_semantic_tags` - whether should the parsed semantic tags be removed from AST before transforming (default: `true`)
-  - `clean_empty_paragraphs` - whether empty paragraphs should be removed. (default: `true`)
+  - `clean_newlines` - By default Markdown outputs nice parse such as: `<p>\\ncontent\\n</p>`. This setting cleans it out (default: `true`)
   - `earmark_inner_transform` - whether parsed inner tags should be re-parsed once more as Markdown (default: `true`)
+  - `content_tag_name` - name of the default content, i.e. not marked by any semantic tags (default: `"content"`)
+  - `merge_content` - whether to merge non-tagged nodes and put it as a final "content" node (default: `false`)
 
   ### `Earmark`'s
   - `footnotes` - whether `Earmark` should parse footnotes (default: `true`)
@@ -27,10 +28,11 @@ defmodule SemanticMarkdown.Type do
           {:footnotes, boolean()}
           | {:footnotes_see, String.t()}
           | {:footnotes_return, String.t()}
-          | {:clean_semantic_tags, boolean()}
-          | {:clean_empty_paragraphs, boolean()}
+          | {:clean_newlines, boolean()}
           | {:earmark_inner_transform, boolean()}
           | {:earmark_transform_options, %{}}
+          | {:content_tag_name, String.t()}
+          | {:merge_content, boolean()}
 
   @type options_map() :: %{
           footnotes: boolean(),
@@ -38,11 +40,10 @@ defmodule SemanticMarkdown.Type do
           footnotes_return: String.t(),
           clean_newlines: boolean(),
           earmark_inner_transform: boolean(),
-          earmark_inner_semantic: boolean(),
           earmark_transform_options: %{},
           content_tag_name: String.t(),
           merge_content: boolean(),
-          tags: [atom()]
+          tags: [atom(), ...]
         }
 
   @type semantic_inner_ast :: {String.t(), [Keyword.t()], ast} | {String.t(), [Keyword.t()]}
