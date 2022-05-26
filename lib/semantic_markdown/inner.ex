@@ -3,10 +3,10 @@ defmodule SemanticMarkdown.Inner do
   `SemanticMarkdown.Inner` Contains inner implementation of Markdown parser, including `transform` that allows to work on the `Earmark`'s AST tree directly and `transform_text` that takes processed `SemanticMarkdown.Type.options_map()`.
   """
   alias SemanticMarkdown.{AST, Type}
+  import AST, only: [is_temporary_tag: 1]
 
   @spec transform_inner_semantic(Type.semantic_inner_ast, Type.options_map) :: Type.result
-  defp transform_inner_semantic({node_name, attributes, value, meta}, %{earmark_transform_inner: true} = options) do
-
+  defp transform_inner_semantic({node_name, attributes, value, meta}, %{earmark_inner_transform: true} = options) do
     [
       attributes: attributes,
       content: transform_text_inner(value, options)
@@ -34,10 +34,15 @@ defmodule SemanticMarkdown.Inner do
       for {attribute, value} <- attributes, do: {String.to_atom(attribute), value}
   end
 
-  def transform_node({:'ex-semantic-markdown-content', value}, options) do
+  def remove_newlines(text, %{clean_newlines: true}) do
+    String.replace(text, "\n", "")
+  end
+  def remove_newlines(text, _), do: text
+
+  def transform_node({tag, value}, options) when is_temporary_tag(tag) do
     {
-      options.content_tag_name,
-      Earmark.transform(value, options.earmark_transform_options)
+      String.to_atom(options.content_tag_name),
+      Earmark.transform(value, options.earmark_transform_options) |> remove_newlines(options)
     }
   end
   def transform_node({key, value}, options) do
@@ -51,11 +56,6 @@ defmodule SemanticMarkdown.Inner do
   def transform(ast, opts) do
     ast
     |> Enum.map(fn n -> transform_node(n, opts) end)
-    # |> Enum.concat(
-    #   ast
-    #   |> Earmark.transform(opts.earmark_transform_options)
-    #   |> then(fn text -> [content: text] end)
-    # )
   end
 
   def merge_content(content, %{merge_content: true, content_tag_name: tag} ) do
@@ -67,8 +67,9 @@ defmodule SemanticMarkdown.Inner do
   end
   def merge_content(content, options), do: content
 
-  def transform_text_inner(text, opts) do
-    ast = Earmark.as_ast!(text, annotations: "%>", footnotes: opts[:footnotes])
+  def transform_text_inner([], opts), do: []
+  def transform_text_inner([text], opts) do
+    ast = Earmark.as_ast!(text, annotations: "%>", footnotes: opts[:footnotes], compact_output: true)
     ast
     |> AST.translate_footnotes(opts)
     |> AST.preparse(opts)
@@ -78,7 +79,7 @@ defmodule SemanticMarkdown.Inner do
 
   @spec transform_text(String.t, Type.options_map) :: Type.result
   def transform_text(text, opts) do
-    transform_text_inner(text, opts)
+    transform_text_inner([text], opts)
     |> merge_content(opts)
   end
 end

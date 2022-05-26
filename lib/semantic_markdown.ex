@@ -10,7 +10,7 @@ defmodule SemanticMarkdown do
   ...> <title>Lorem ipsum</title>
   ...> Hello world!
   ...> \"\"\", [:title])
-  [title: "<p>\\nLorem ipsum</p>\\n", content: "<p>\\nHello world!</p>\\n"]
+  [title: "<p>Lorem ipsum</p>", content: "<p>Hello world!</p>"]
   ```
 
   `SemanticMarkdown.transform` takes 3 parameters:
@@ -21,17 +21,17 @@ defmodule SemanticMarkdown do
 
   It is possible to disable parsing inner tags:
   ```
-  iex> options = [earmark_transform_inner: false]
+  iex> options = [earmark_inner_transform: false]
   iex> SemanticMarkdown.transform(~S\"\"\"
   ...> <title>Lorem ipsum</title>
   ...> Hello world!
   ...> \"\"\", [:title], options)
-  [title: "Lorem ipsum", content: "<p>\\nHello world!</p>\\n"]
+  [title: "Lorem ipsum", content: "<p>Hello world!</p>"]
   ```
 
   As the parsing result is a list same named tags can occur multiple times:
   ```
-  iex> options = [earmark_transform_inner: false]
+  iex> options = [earmark_inner_transform: false]
   iex> markdown = \"\"\"
   ...> <color_marker>red</color_marker>
   ...> <color_marker>blue</color_marker>
@@ -45,14 +45,14 @@ defmodule SemanticMarkdown do
       color_marker: "blue",
       color_marker: "green",
       title: "Coloring book",
-      content: "<p>\\nHello world!</p>\\n"
+      content: "<p>Hello world!</p>"
   ]
   ```
 
   Content is optional:
 
   ```
-  iex> options = [earmark_transform_inner: false]
+  iex> options = [earmark_inner_transform: false]
   iex> markdown = \"\"\"
   ...> <color_marker>red</color_marker>
   ...> <color_marker>blue</color_marker>
@@ -68,7 +68,7 @@ defmodule SemanticMarkdown do
 
   It's possible to have self-closing tags, however attribute information is missing:
   ```
-  iex> options = [earmark_transform_inner: false]
+  iex> options = [earmark_inner_transform: false]
   iex> markdown = \"\"\"
   ...> # Title
   ...> Hello!
@@ -79,14 +79,13 @@ defmodule SemanticMarkdown do
   ...> \"\"\"
   iex> SemanticMarkdown.transform(markdown, [:boing], options)
   [
-        content: "<h1>\\nTitle</h1>\\n<p>\nHello!</p>\\n",
+        content: "<h1>Title</h1><p>Hello!</p>",
         boing: true,
         boing: true,
         boing: true,
-        content: "<p>\\nBye!</p>\\n"
+        content: "<p>Bye!</p>"
   ]
   ```
-
 
   """
 
@@ -96,16 +95,17 @@ defmodule SemanticMarkdown do
     footnotes: true,
     footnotes_see: "see footnote",
     footnotes_return: "return to article",
-    earmark_transform_inner: true,
+    clean_newlines: true,
+    earmark_inner_transform: true,
+    earmark_inner_semantic: false,
     earmark_transform_options: %{},
-    content_tag_name: :content,
+    content_tag_name: "content",
     merge_content: false
   }
 
   @spec transform(String.t, [atom(), ...], [Type.options()]) :: Type.result()
   @doc """
-  Transforms `markdown_string` into HTML while allowing marking semantic parts of input with configured XML tags.
-
+  Transforms `markdown_string` into keyworded list containing separated parts by semantic tag
   """
   def transform(markdown_string, semantic_tags, options \\ []) do
     tags = Enum.map(semantic_tags, &to_string/1)
@@ -117,6 +117,10 @@ defmodule SemanticMarkdown do
     SemanticMarkdown.Inner.transform_text(markdown_string, opts)
   end
 
+  @doc """
+  Helper function that takes a file path string, list of tags and options
+  and returns keyword list of parsed content.
+  """
   @spec transform_from_file!(String.t, [atom(), ...], [Type.option()]) :: Type.result()
   def transform_from_file!(file, semantic_tags, options \\ []) do
     File.read!(file)

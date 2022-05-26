@@ -16,7 +16,7 @@ defmodule SemanticMarkdown.Type do
   - `footnotes_return` - Same as above but for the return link (default: `"return to article"`)
   - `clean_semantic_tags` - whether should the parsed semantic tags be removed from AST before transforming (default: `true`)
   - `clean_empty_paragraphs` - whether empty paragraphs should be removed. (default: `true`)
-  - `earmark_transform_inner` - whether parsed inner tags should be re-parsed once more as Markdown (default: `true`)
+  - `earmark_inner_transform` - whether parsed inner tags should be re-parsed once more as Markdown (default: `true`)
 
   ### `Earmark`'s
   - `footnotes` - whether `Earmark` should parse footnotes (default: `true`)
@@ -29,7 +29,7 @@ defmodule SemanticMarkdown.Type do
   | {:footnotes_return, String.t}
   | {:clean_semantic_tags, boolean()}
   | {:clean_empty_paragraphs, boolean()}
-  | {:earmark_transform_inner, boolean()}
+  | {:earmark_inner_transform, boolean()}
   | {:earmark_transform_options, %{}}
 
   @type options_map() :: %{
@@ -38,7 +38,7 @@ defmodule SemanticMarkdown.Type do
     footnotes_return: String.t,
     clean_semantic_tags: boolean(),
     clean_empty_paragraphs: boolean(),
-    earmark_transform_inner: boolean(),
+    earmark_inner_transform: boolean(),
     earmark_transform_options: [any],
     tags: [atom()]
   }

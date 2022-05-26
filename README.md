@@ -7,7 +7,7 @@ Those are extracted and provided in Keyword-list form along with the non marked 
 
 E.g.:
 
-```
+```markdown
 <author>Alexander "exlee" Kaminski</author>
 <date>2022-02-02</date>
 <language>en_US</language>
@@ -27,7 +27,7 @@ As _content_ on this *page* is very intensive you will not be able to see the im
 ```
 
 ... is transformed into friendly keyword list:
-```
+```elixir
 [
   author: ...,
   date: ...,
@@ -149,3 +149,4 @@ It it's also possible to split the `.md` files into multiple ones using schema l
 - [ ] since parsing is done using `Earmark` it shares some caveats (like [HTML Limitation](https://hexdocs.pm/earmark_parser/EarmarkParser.html#module-limitations))
 - [ ] no performance tests were done, but most likely it's not very fast so the input files should be pre-processed and cached
 - [ ] it'd be nice to have tag transformers provided in form of `(text) -> any` so that output can be "smarter"
+- [ ] nested semantic tags are not supported (this probably would require switching parser entirely)

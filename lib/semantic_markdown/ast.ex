@@ -6,20 +6,17 @@ defmodule SemanticMarkdown.AST do
   alias Earmark.Transform
   alias SemanticMarkdown.Type
 
-  @temporary_generic_content_tag :'ex-semantic-markdown-content'
+  @temporary_semantic_tag :"ex-semantic-markdown-content"
+  @tt @temporary_semantic_tag
+
+  defguard is_temporary_tag(n) when n == @tt
 
   @spec map_attrs(Type.ast_tuple, {[{String.t, String.t}], [String.t, ...]}) :: {Type.ast_tuple, {[{String.t, String.t}], [String.t, ...]}}
   def map_attrs({node_name, attrs, values, _} = n, {list, keys}) do
     if node_name in keys do
-      case values do
-        [value] -> {n, {list ++ [{node_name, attrs, value}], keys}}
-        _ -> {n, {list ++ [{node_name, attrs, values}], keys}}
-      end
+      {n, {list ++ [{node_name, attrs, values}], keys}}
     else
-      case values do
-        [value] -> {n, {list ++ [{"exsm-content", attrs, value}], keys}}
-        _ -> {n, {list ++ [{"exsm-content", attrs, values}], keys}}
-      end
+      {n, {list ++ [{"exsm-content", attrs, values}], keys}}
     end
   end
 
@@ -35,7 +32,6 @@ defmodule SemanticMarkdown.AST do
     end
   end
 
-  @tt @temporary_generic_content_tag
   def group_reducer({@tt, value}, [{@tt, acc_value} | tail]) do
     [{@tt, acc_value ++ value} | tail]
   end
@@ -45,15 +41,15 @@ defmodule SemanticMarkdown.AST do
     if node_name in options.tags do
       {String.to_atom(node_name), node}
     else
-      {@temporary_generic_content_tag, [node]}
+      {@tt, [node]}
     end
   end
 
   def update_content_name(ast, options) do
     ast
-    |> Enum.map(&(update_content_name(&1, options.content_tag_name)))
+    |> Enum.map(&(update_content_name(&1, String.to_atom(options.content_tag_name))))
   end
-  def update_content_name({@temporary_generic_content_tag, value}, final_name) do
+  def update_content_name({@tt, value}, final_name) do
     {final_name, value}
   end
 
