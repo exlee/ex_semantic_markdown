@@ -103,10 +103,10 @@ defmodule SemanticMarkdown do
     merge_content: false
   }
 
-  @spec transform(String.t, [atom(), ...], [Type.options()]) :: Type.result()
   @doc """
   Transforms `markdown_string` into keyworded list containing separated parts by semantic tag
   """
+  @spec transform(String.t, [atom(), ...], [Type.options()]) :: Type.result()
   def transform(markdown_string, semantic_tags, options \\ []) do
     tags = Enum.map(semantic_tags, &to_string/1)
 

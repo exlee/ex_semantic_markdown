@@ -11,16 +11,6 @@ defmodule SemanticMarkdown.AST do
 
   defguard is_temporary_tag(n) when n == @tt
 
-  @spec map_attrs(Type.ast_tuple, {[{String.t, String.t}], [String.t, ...]}) :: {Type.ast_tuple, {[{String.t, String.t}], [String.t, ...]}}
-  def map_attrs({node_name, attrs, values, _} = n, {list, keys}) do
-    if node_name in keys do
-      {n, {list ++ [{node_name, attrs, values}], keys}}
-    else
-      {n, {list ++ [{"exsm-content", attrs, values}], keys}}
-    end
-  end
-
-
   @spec make_semantic_cleaner([String.t, ...]) :: (Type.ast_tuple -> {:replace, String.t} | Type.ast_tuple)
   def make_semantic_cleaner(keys) do
     fn {attr, _, _, _} = node ->
@@ -32,11 +22,13 @@ defmodule SemanticMarkdown.AST do
     end
   end
 
+  @spec group_reducer({atom(), Type.ast}, Type.ast) :: [{atom(), Type.ast}]
   def group_reducer({@tt, value}, [{@tt, acc_value} | tail]) do
     [{@tt, acc_value ++ value} | tail]
   end
   def group_reducer(node, acc), do: [node | acc]
 
+  @spec ast_parse(Type.ast_tuple, Type.options_map) :: {atom(), Type.ast_tuple | [Type.ast_tuple]}
   def ast_parse({node_name, _, _, _meta} = node, options) do
     if node_name in options.tags do
       {String.to_atom(node_name), node}
@@ -45,30 +37,13 @@ defmodule SemanticMarkdown.AST do
     end
   end
 
-  def update_content_name(ast, options) do
-    ast
-    |> Enum.map(&(update_content_name(&1, String.to_atom(options.content_tag_name))))
-  end
-  def update_content_name({@tt, value}, final_name) do
-    {final_name, value}
-  end
-
-  def update_content_name(node, _), do: node
-
+  @spec preparse(Type.ast, Type.options_map) :: [{atom(), Type.ast}, ...]
   def preparse(ast, options) do
     ast
     |> Enum.map(&(ast_parse(&1, options)))
     |> Enum.reduce([], &group_reducer/2)
     |> Enum.reverse
   end
-
-
-  @spec map_clean_empty_paragraphs(Type.ast_tuple) :: {:replace, String.t} | Type.ast_tuple
-  def map_clean_empty_paragraphs(node)
-  def map_clean_empty_paragraphs({"p", _, [""], _}) do
-    {:replace, ""}
-  end
-  def map_clean_empty_paragraphs(n), do: n
 
   @spec replace_attr(Type.ast_tuple, String.t, String.t) :: Type.ast_tuple
   def replace_attr({element, attrs, value, meta}, key, new_text) do
@@ -95,16 +70,4 @@ defmodule SemanticMarkdown.AST do
   def translate_footnotes(ast, opts) do
     Transform.map_ast(ast, make_translate_footnotes_mapper(opts), true)
   end
-
-  @spec clean_semantic_tags(Type.ast, Type.options_map) :: Type.ast
-  def clean_semantic_tags(ast, %{tags: tags, clean_semantic_tags: true}) do
-    Transform.map_ast(ast, make_semantic_cleaner(tags), true)
-  end
-  def clean_semantic_tags(ast, _), do: ast
-
-  @spec clean_empty_paragraphs(Type.ast, Type.options_map) :: Type.ast
-  def clean_empty_paragraphs(ast, %{clean_empty_paragraphs: true}) do
-    Transform.map_ast(ast, &map_clean_empty_paragraphs/1, true)
-  end
-  def clean_empty_paragraphs(ast, _), do: ast
 end

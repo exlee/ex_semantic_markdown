@@ -36,20 +36,22 @@ defmodule SemanticMarkdown.Type do
     footnotes: boolean(),
     footnotes_see: String.t,
     footnotes_return: String.t,
-    clean_semantic_tags: boolean(),
-    clean_empty_paragraphs: boolean(),
+    clean_newlines: boolean(),
     earmark_inner_transform: boolean(),
-    earmark_transform_options: [any],
+    earmark_inner_semantic: boolean(),
+    earmark_transform_options: %{},
+    content_tag_name: String.t,
+    merge_content: boolean(),
     tags: [atom()]
   }
 
   @type semantic_inner_ast :: {String.t, [Keyword.t], ast} | {String.t, [Keyword.t]}
 
-  @type semantic_tag() :: String.t | [result(), ...]
   @typedoc """
   Keyword list containing Markdown transformed into HTML.
 
-  Minimal result is `[content: String.t]` representing parsed input string.
+  Minimal result is `[content: String.t]` representing parsed input string,
+  where _content_ key is configurable.
 
   Parsed semantic tags can be either in form of:
   - `{tag_name :: atom(), tag_content :: String.t}`
@@ -59,5 +61,16 @@ defmodule SemanticMarkdown.Type do
   - `content` that contains parsed markdown content
   - `attributes` that contains XML tag attributes
   """
-  @type result() :: [content: String.t] | [{atom(), semantic_tag()}, ...]
+  @type result() :: [{atom(), content()}, ...]
+
+  @type content_map :: %{
+    attributes: [Keyword.t],
+    content: [String.t] | String.t
+  }
+  @type content() ::
+  content_map()
+  | String.t()
+  | boolean()
+
+
 end
