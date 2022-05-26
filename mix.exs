@@ -3,7 +3,7 @@ defmodule SemanticMarkdown.MixProject do
 
   def project do
     [
-      app: :ex_semantic_markdown,
+      app: :semantic_markdown,
       version: "0.1.0",
       description: "Markdown parser with support for semantic structure/tagging",
       elixir: "~> 1.13",
@@ -13,7 +13,7 @@ defmodule SemanticMarkdown.MixProject do
       homepage_url: "https://github.com/exlee/ex_semantic_markdown",
       licenses: ["MIT"],
       docs: [
-        main: "SemanticMarkdown",
+        main: "README",
         extras: ["README.md"],
         deps: [earmark: "https://hexdocs.pm/earmark"]
       ]

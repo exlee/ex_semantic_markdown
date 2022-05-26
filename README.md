@@ -50,8 +50,7 @@ Solution space:
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `semantic_markdown` to your list of dependencies in `mix.exs`:
+`SemanticMarkdown` can be installed by adding `semantic_markdown` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -61,9 +60,7 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/semantic_markdown>.
+Documentation can be found at <https://hexdocs.pm/semantic_markdown>.
 
 
 ## Rationale
@@ -84,7 +81,7 @@ extending model as needed.
 
 ### Footnotes
 
-At the time of writing this library `Earmark` hardcodes `see footnotes` and `return to article` when
+At the time of writing this library `Earmark` hard codes `see footnotes` and `return to article` when
 parsing them.  `SemanticMarkdown` provides options to replace those during parse allowing to use
 non-English titles (e.g. with `gettext`), which was another motivation and the actual
 
@@ -150,3 +147,10 @@ It it's also possible to split the `.md` files into multiple ones using schema l
 - [ ] no performance tests were done, but most likely it's not very fast so the input files should be pre-processed and cached
 - [ ] it'd be nice to have tag transformers provided in form of `(text) -> any` so that output can be "smarter"
 - [ ] nested semantic tags are not supported (this probably would require switching parser entirely)
+
+
+### Next
+
+1. More tests, especially with more complex documents
+2. Configurable transformers for tags
+3. Per-tag inner-parsing
