@@ -11,7 +11,12 @@ defmodule SemanticMarkdown.MixProject do
       deps: deps(),
       source_url: "https://github.com/exlee/ex_semantic_markdown",
       homepage_url: "https://github.com/exlee/ex_semantic_markdown",
-      licenses: ["MIT"],
+      package: [
+        licenses: ["MIT"],
+        links: %{
+          "GitHub" => "https://github.com/exlee/ex_semantic_markdown"
+        }
+      ],
       docs: [
         main: "README",
         extras: ["README.md"],
