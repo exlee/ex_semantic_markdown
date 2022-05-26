@@ -3,8 +3,8 @@ defmodule SemanticMarkdown.Type do
   `SemanticMarkdown.Type` is a module containing used types within
   `SemanticMarkdown`
   """
-  @type ast_tuple :: Earmark.ast_tuple
-  @type ast :: Earmark.ast
+  @type ast_tuple :: Earmark.ast_tuple()
+  @type ast :: Earmark.ast()
 
   @typedoc """
   Keyword list of options.
@@ -24,28 +24,28 @@ defmodule SemanticMarkdown.Type do
   """
   @type options() :: [option()]
   @type option() ::
-  {:footnotes, boolean()}
-  | {:footnotes_see, String.t}
-  | {:footnotes_return, String.t}
-  | {:clean_semantic_tags, boolean()}
-  | {:clean_empty_paragraphs, boolean()}
-  | {:earmark_inner_transform, boolean()}
-  | {:earmark_transform_options, %{}}
+          {:footnotes, boolean()}
+          | {:footnotes_see, String.t()}
+          | {:footnotes_return, String.t()}
+          | {:clean_semantic_tags, boolean()}
+          | {:clean_empty_paragraphs, boolean()}
+          | {:earmark_inner_transform, boolean()}
+          | {:earmark_transform_options, %{}}
 
   @type options_map() :: %{
-    footnotes: boolean(),
-    footnotes_see: String.t,
-    footnotes_return: String.t,
-    clean_newlines: boolean(),
-    earmark_inner_transform: boolean(),
-    earmark_inner_semantic: boolean(),
-    earmark_transform_options: %{},
-    content_tag_name: String.t,
-    merge_content: boolean(),
-    tags: [atom()]
-  }
+          footnotes: boolean(),
+          footnotes_see: String.t(),
+          footnotes_return: String.t(),
+          clean_newlines: boolean(),
+          earmark_inner_transform: boolean(),
+          earmark_inner_semantic: boolean(),
+          earmark_transform_options: %{},
+          content_tag_name: String.t(),
+          merge_content: boolean(),
+          tags: [atom()]
+        }
 
-  @type semantic_inner_ast :: {String.t, [Keyword.t], ast} | {String.t, [Keyword.t]}
+  @type semantic_inner_ast :: {String.t(), [Keyword.t()], ast} | {String.t(), [Keyword.t()]}
 
   @typedoc """
   Keyword list containing Markdown transformed into HTML.
@@ -64,13 +64,11 @@ defmodule SemanticMarkdown.Type do
   @type result() :: [{atom(), content()}, ...]
 
   @type content_map :: %{
-    attributes: [Keyword.t],
-    content: [String.t] | String.t
-  }
+          attributes: [Keyword.t()],
+          content: [String.t()] | String.t()
+        }
   @type content() ::
-  content_map()
-  | String.t()
-  | boolean()
-
-
+          content_map()
+          | String.t()
+          | boolean()
 end

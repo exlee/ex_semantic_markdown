@@ -106,13 +106,14 @@ defmodule SemanticMarkdown do
   @doc """
   Transforms `markdown_string` into keyworded list containing separated parts by semantic tag
   """
-  @spec transform(String.t, [atom(), ...], [Type.options()]) :: Type.result()
+  @spec transform(String.t(), [atom(), ...], [Type.options()]) :: Type.result()
   def transform(markdown_string, semantic_tags, options \\ []) do
     tags = Enum.map(semantic_tags, &to_string/1)
 
-    opts = @_default_options
-    |> Map.merge(Map.new(options))
-    |> Map.merge(%{tags: tags})
+    opts =
+      @_default_options
+      |> Map.merge(Map.new(options))
+      |> Map.merge(%{tags: tags})
 
     SemanticMarkdown.Inner.transform_text(markdown_string, opts)
   end
@@ -121,7 +122,7 @@ defmodule SemanticMarkdown do
   Helper function that takes a file path string, list of tags and options
   and returns keyword list of parsed content.
   """
-  @spec transform_from_file!(String.t, [atom(), ...], [Type.option()]) :: Type.result()
+  @spec transform_from_file!(String.t(), [atom(), ...], [Type.option()]) :: Type.result()
   def transform_from_file!(file, semantic_tags, options \\ []) do
     File.read!(file)
     |> transform(semantic_tags, options)
